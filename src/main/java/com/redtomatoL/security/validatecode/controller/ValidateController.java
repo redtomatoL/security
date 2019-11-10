@@ -38,7 +38,7 @@ public class ValidateController {
 
         // 生产验证码
         ImageCode imageCode = createImageCode(request);
-        session.setAttribute(SESSION_KEY,imageCode.getCode());
+        session.setAttribute(SESSION_KEY,imageCode);
         ImageIO.write(imageCode.getImage(),"JPEG",response.getOutputStream());
     }
 

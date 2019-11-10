@@ -2,9 +2,13 @@ package com.redtomatoL.security.validatecode.filter;
 
 import com.redtomatoL.security.validatecode.controller.ValidateController;
 import com.redtomatoL.security.validatecode.exception.ValidateCodeException;
+import com.redtomatoL.security.validatecode.image.ImageCode;
+import lombok.Data;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.web.bind.ServletRequestBindingException;
+import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -20,9 +24,10 @@ import java.io.IOException;
  * @version V1.0
  * @date 2019/11/10
  **/
+@Data
 public class ValidateCodeFilter extends OncePerRequestFilter {
 
-    @Autowired
+//    @Autowired
     private AuthenticationFailureHandler authenticationFailureHandler;
 
     @Override
@@ -39,18 +44,34 @@ public class ValidateCodeFilter extends OncePerRequestFilter {
 
             }
 
-        }else{
-            filterChain.doFilter(request,response);
         }
+        filterChain.doFilter(request,response);
 
     }
 
-    private void validate(ServletWebRequest servletWebRequest) {
+    private void validate(ServletWebRequest servletWebRequest) throws ServletRequestBindingException {
         HttpSession session = servletWebRequest.getRequest().getSession();
-        String code = (String)session.getAttribute(ValidateController.SESSION_KEY);
-        if(StringUtils.isBlank(code)){
+        ImageCode codeInSession = (ImageCode)session.getAttribute(ValidateController.SESSION_KEY);
+
+        String codeInRequest = ServletRequestUtils.getStringParameter(servletWebRequest.getRequest(),"imageCode");
+        if(StringUtils.isBlank(codeInRequest)){
             throw new ValidateCodeException("验证码不能为空");
         }
 
+        if(codeInSession == null){
+            throw new ValidateCodeException("验证码不存在");
+        }
+
+        if(codeInSession.isExpired()){
+            throw new ValidateCodeException("验证码过期");
+        }
+
+        if(!StringUtils.equalsIgnoreCase(codeInRequest,codeInSession.getCode())){
+            throw new ValidateCodeException("验证码不匹配");
+        }
+
+        session.removeAttribute(ValidateController.SESSION_KEY);
     }
+
+
 }

@@ -41,7 +41,7 @@ public class BrowserDefaultFailureHandler extends SimpleUrlAuthenticationFailure
         if(LoginType.JSON.equals(securityProperties.getBrowser().getLoginType())){
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             response.setContentType("application/json;charset=UTF-8");
-            response.getWriter().write(objectMapper.writeValueAsString(new SimpleResponse(exception)));
+            response.getWriter().write(objectMapper.writeValueAsString(new SimpleResponse(exception.getMessage())));
         }else{
             super.onAuthenticationFailure(request,response,exception);
         }
