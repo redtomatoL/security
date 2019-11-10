@@ -1,4 +1,5 @@
-#redtomato:
-#  security:
-#    browser:
+redtomato:
+  security:
+    browser:
 #      loginPage: /demo-signIn.html
+      loginType: REDIRECT
