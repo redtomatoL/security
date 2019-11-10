@@ -1,5 +1,9 @@
 package com.redtomatoL.security.config;
 
+import com.redtomatoL.security.authentication.BrowserDefaultFailureHandler;
+import com.redtomatoL.security.authentication.BrowserDefaultSuccessHandler;
+import com.redtomatoL.security.properties.SecurityProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,16 +25,27 @@ public class HttpSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    @Autowired
+    private SecurityProperties securityProperties;
+
+    @Autowired
+    private BrowserDefaultSuccessHandler successHandler;
+
+    @Autowired
+    private BrowserDefaultFailureHandler failureHandler;
+
     @Configuration
-    public static class WebSercurityConfig extends WebSecurityConfigurerAdapter{
+    public  class WebSercurityConfig extends WebSecurityConfigurerAdapter{
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             http.formLogin()
-                    .loginPage("/default-signIn.html")
+                    .loginPage("/authentication/require")
                     .loginProcessingUrl("/authentication/form")
+                    .successHandler(successHandler)
+                    .failureHandler(failureHandler)
                     .and()
                     .authorizeRequests()
-                    .antMatchers("/default-signIn.html").permitAll()
+                    .antMatchers("/authentication/require",securityProperties.getBrowser().getLoginPage()).permitAll()
                     .anyRequest()
                     .authenticated()
                     .and()

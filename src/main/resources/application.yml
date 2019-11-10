@@ -1,0 +1,4 @@
+#redtomato:
+#  security:
+#    browser:
+#      loginPage: /demo-signIn.html
