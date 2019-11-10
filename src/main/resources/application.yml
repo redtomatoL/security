@@ -8,3 +8,4 @@ redtomato:
     code:
       image:
         length: 6
+        url: /users,/users/*

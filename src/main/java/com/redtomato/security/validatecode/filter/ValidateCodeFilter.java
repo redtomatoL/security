@@ -5,6 +5,7 @@ import com.redtomato.security.validatecode.controller.ValidateController;
 import com.redtomato.security.validatecode.image.ImageCode;
 import lombok.Data;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.ServletRequestUtils;
@@ -17,6 +18,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author ljm
@@ -24,10 +27,13 @@ import java.io.IOException;
  * @date 2019/11/10
  **/
 @Data
-public class ValidateCodeFilter extends OncePerRequestFilter {
+public class ValidateCodeFilter extends OncePerRequestFilter implements InitializingBean {
 
 //    @Autowired
     private AuthenticationFailureHandler authenticationFailureHandler;
+
+    private Set<String> urls = new HashSet<>();
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,

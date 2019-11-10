@@ -3,6 +3,7 @@ package com.redtomato.security.validatecode.controller;
 import com.redtomato.security.properties.SecurityProperties;
 import com.redtomato.security.validatecode.image.ImageCode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -44,8 +45,10 @@ public class ValidateController {
     private ImageCode createImageCode(HttpServletRequest request) {
         // 先从参数中获取验证码的宽度和长度，如果没有从配置文件中读取。配置文件中有默认值，也可以从properties文件中覆盖参数
         // 3级处理 请求参数级别 -> 应用配置级别 -> 默认级别
-        int width = 67;
-        int height = 23;
+        int width = ServletRequestUtils.getIntParameter(request, "width",
+                securityProperties.getCode().getImage().getWidth());
+        int height = ServletRequestUtils.getIntParameter(request, "height",
+                securityProperties.getCode().getImage().getHeight());
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
         Graphics g = image.getGraphics();
@@ -66,7 +69,7 @@ public class ValidateController {
 
         String sRand = "";
         // 从配置文件里面读取验证码的长度 securityProperties.getCode().getImage().getLength()
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < securityProperties.getCode().getImage().getLength(); i++) {
             String rand = String.valueOf(random.nextInt(10));
             sRand += rand;
             g.setColor(new Color(20 + random.nextInt(110), 20 + random.nextInt(110), 20 + random.nextInt(110)));
@@ -75,7 +78,7 @@ public class ValidateController {
 
         g.dispose();
         // 从配置文件里面读取验证码的过期时间 securityProperties.getCode().getImage().getExpireIn()
-        return new ImageCode(image, sRand, 60);
+        return new ImageCode(image, sRand, securityProperties.getCode().getImage().getExpireIn());
     }
 
     /**
