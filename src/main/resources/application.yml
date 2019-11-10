@@ -3,3 +3,8 @@
 #    browser:
 #      loginPage: /demo-signIn.html
 #      loginType: REDIRECT
+redtomato:
+  security:
+    code:
+      image:
+        length: 6
