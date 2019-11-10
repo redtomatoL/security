@@ -45,7 +45,9 @@ public class HttpSecurityConfig {
                     .failureHandler(failureHandler)
                     .and()
                     .authorizeRequests()
-                    .antMatchers("/authentication/require",securityProperties.getBrowser().getLoginPage()).permitAll()
+                    .antMatchers("/authentication/require",
+                            "/code/image",
+                            securityProperties.getBrowser().getLoginPage()).permitAll()
                     .anyRequest()
                     .authenticated()
                     .and()
