@@ -7,5 +7,5 @@ redtomato:
   security:
     code:
       image:
-        length: 6
-        url: /users,/users/*
+        length: 2
+#        url: /users,/users/*
