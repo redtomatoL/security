@@ -32,6 +32,9 @@ public class ValidateController {
     @Autowired
     private ValidateCodeGenerator imageCodeGenerator;
 
+    @Autowired
+    private ValidateCodeGenerator smsCodeGenerator;
+
 
     @GetMapping("/code/image")
     public void createCode(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -39,6 +42,16 @@ public class ValidateController {
 
         // 生产验证码
         ImageCode imageCode = imageCodeGenerator.createImageCode(request);
+        session.setAttribute(SESSION_KEY,imageCode);
+        ImageIO.write(imageCode.getImage(),"JPEG",response.getOutputStream());
+    }
+
+    @GetMapping("/code/sms")
+    public void createSmsCode(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HttpSession session = request.getSession(true);
+
+        // 生产验证码
+        ImageCode imageCode = smsCodeGenerator.createImageCode(request);
         session.setAttribute(SESSION_KEY,imageCode);
         ImageIO.write(imageCode.getImage(),"JPEG",response.getOutputStream());
     }
