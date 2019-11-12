@@ -9,15 +9,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 /**
  * @author ljm
  * @version V1.0
  * @date 2019/11/5
  **/
-@Configuration
+@Service("myUserDetailService")
 @Slf4j
-public class UserDetailService implements UserDetailsService {
+public class MyUserDetailService implements UserDetailsService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;

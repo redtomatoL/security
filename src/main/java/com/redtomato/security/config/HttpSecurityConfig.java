@@ -5,10 +5,12 @@ import com.redtomato.security.authentication.BrowserDefaultSuccessHandler;
 import com.redtomato.security.properties.SecurityProperties;
 import com.redtomato.security.validatecode.filter.ValidateCodeFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -43,6 +45,10 @@ public class HttpSecurityConfig {
     @Autowired
     private DataSource dataSource;
 
+    @Autowired
+    @Qualifier("myUserDetailService")
+    private UserDetailsService userDetailsService;
+
     /**
      * 配置记住我功能
      * @return
@@ -51,7 +57,7 @@ public class HttpSecurityConfig {
     public PersistentTokenRepository persistentTokenRepository(){
         JdbcTokenRepositoryImpl jdbcTokenRepository = new JdbcTokenRepositoryImpl();
         jdbcTokenRepository.setDataSource(dataSource);
-        jdbcTokenRepository.setCreateTableOnStartup(true);
+//        jdbcTokenRepository.setCreateTableOnStartup(true);
         return jdbcTokenRepository;
     }
 
@@ -70,6 +76,11 @@ public class HttpSecurityConfig {
                     .loginProcessingUrl("/authentication/form")
                     .successHandler(successHandler)
                     .failureHandler(failureHandler)
+                    .and()
+                    .rememberMe()
+                    .tokenRepository(persistentTokenRepository())
+                    .tokenValiditySeconds(securityProperties.getBrowser().getRememberMeSeconds())
+                    .userDetailsService(userDetailsService)
                     .and()
                     .authorizeRequests()
                     .antMatchers("/authentication/require",
