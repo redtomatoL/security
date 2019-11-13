@@ -8,7 +8,12 @@ import lombok.Data;
  * @date 2019/11/11
  **/
 @Data
-public class ImageCodeProperties {
+public class ImageCodeProperties extends SmsCodeProperties{
+
+    public ImageCodeProperties(){
+        setLength(4);
+    }
+
 
     /**
      * 图片宽
@@ -18,16 +23,6 @@ public class ImageCodeProperties {
      * 图片高
      */
     private int height = 23;
-    /**
-     * 验证码长度
-     */
-    private int length = 4;
-    /**
-     * 失效时间
-     */
-    private int expireIn = 60;
-
-    private String url;
 
 
 }

@@ -3,8 +3,6 @@
  */
 package com.redtomato.security.validatecode;
 
-import com.redtomato.security.validatecode.image.ImageCode;
-
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -19,6 +17,6 @@ public interface ValidateCodeGenerator {
 	 * @param request
 	 * @return
 	 */
-	ImageCode createImageCode(HttpServletRequest request);
+	ValidateCode createImageCode(HttpServletRequest request);
 	
 }
