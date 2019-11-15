@@ -22,7 +22,7 @@ public class SmsCodeGenerator implements ValidateCodeGenerator {
 
 
     @Override
-    public ValidateCode createImageCode(HttpServletRequest request) {
+    public ValidateCode generate(HttpServletRequest request) {
         String code = RandomStringUtils.randomNumeric(securityProperties.getCode().getSms().getLength());
 
         return new ValidateCode(code,securityProperties.getCode().getSms().getExpireIn());

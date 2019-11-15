@@ -84,7 +84,7 @@ public class HttpSecurityConfig {
                     .and()
                     .authorizeRequests()
                     .antMatchers("/authentication/require",
-                            "/code/image",
+                            "/code/*",
                             securityProperties.getBrowser().getLoginPage()).permitAll()
                     .anyRequest()
                     .authenticated()

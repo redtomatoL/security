@@ -1,6 +1,7 @@
 package com.redtomato.security.validatecode.filter;
 
 import com.redtomato.security.properties.SecurityProperties;
+import com.redtomato.security.validatecode.ValidateCodeProcessor;
 import com.redtomato.security.validatecode.exception.ValidateCodeException;
 import com.redtomato.security.validatecode.controller.ValidateController;
 import com.redtomato.security.validatecode.image.ImageCode;
@@ -84,7 +85,7 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
 
     private void validate(ServletWebRequest servletWebRequest) throws ServletRequestBindingException {
         HttpSession session = servletWebRequest.getRequest().getSession();
-        ImageCode codeInSession = (ImageCode)session.getAttribute(ValidateController.SESSION_KEY);
+        ImageCode codeInSession = (ImageCode)session.getAttribute(ValidateCodeProcessor.SESSION_KEY_PREFIX);
 
         String codeInRequest = ServletRequestUtils.getStringParameter(servletWebRequest.getRequest(),"imageCode");
         if(StringUtils.isBlank(codeInRequest)){
@@ -103,7 +104,7 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
             throw new ValidateCodeException("验证码不匹配");
         }
 
-        session.removeAttribute(ValidateController.SESSION_KEY);
+        session.removeAttribute(ValidateCodeProcessor.SESSION_KEY_PREFIX);
     }
 
 
