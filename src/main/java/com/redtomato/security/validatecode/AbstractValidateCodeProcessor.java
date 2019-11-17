@@ -43,7 +43,7 @@ public abstract class AbstractValidateCodeProcessor<C extends ValidateCode> impl
 
     private C generate(ServletWebRequest request) {
         String type = getValidateCodeType(request).toLowerCase();
-        String generatorName = type + ValidateCodeGenerator.class.getSimpleName();
+        String generatorName = type + "CodeGenerator";
         ValidateCodeGenerator validateCodeGenerator = validateCodeGenerators.get(generatorName);
         if (validateCodeGenerator == null) {
             throw new ValidateCodeException("验证码生成器" + generatorName + "不存在");

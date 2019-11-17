@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.ServletRequestUtils;
@@ -23,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -32,9 +34,10 @@ import java.util.Set;
  * @date 2019/11/10
  **/
 @Data
+@Component
 public class ValidateCodeFilter extends OncePerRequestFilter implements InitializingBean {
 
-//    @Autowired
+    @Autowired
     private AuthenticationFailureHandler authenticationFailureHandler;
 
     private Set<String> urlSet = new HashSet<>();
@@ -45,7 +48,7 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
     private SecurityProperties securityProperties;
 
     @Autowired
-    private ValidateCodeProcessor validateCodeProcessor;
+    private Map<String, ValidateCodeProcessor> validateCodeProcessors;
 
     @Override
     public void afterPropertiesSet() throws ServletException {
@@ -59,6 +62,7 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
         }
 
         urlSet.add("/authentication/form");
+        urlSet.add("/authentication/mobile");
     }
 
     @Override
@@ -74,7 +78,7 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
         }
         if(action){
             try {
-                validateCodeProcessor.validate(new ServletWebRequest(request));
+                validateCodeProcessors.get("imageValidateCodeProcessor").validate(new ServletWebRequest(request));
             }catch(ValidateCodeException validateCodeException){
                 authenticationFailureHandler.onAuthenticationFailure(request,response,validateCodeException);
                 return;
@@ -86,6 +90,13 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
 
     }
 
+
+
+    private String getValidateCodeType(HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        String type = StringUtils.substringAfter(uri,"/code/");
+        return type;
+    }
 
 
 

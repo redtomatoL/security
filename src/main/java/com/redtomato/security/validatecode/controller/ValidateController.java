@@ -27,7 +27,7 @@ public class ValidateController {
 
     @GetMapping("/code/{type}")
     public void createCode(HttpServletRequest request, HttpServletResponse response, @PathVariable String type) throws IOException, ServletRequestBindingException {
-        validateCodeProcessors.get(type+"CodeProcessor").create(new ServletWebRequest(request,response));
+        validateCodeProcessors.get(type+"ValidateCodeProcessor").create(new ServletWebRequest(request,response));
     }
 
 
