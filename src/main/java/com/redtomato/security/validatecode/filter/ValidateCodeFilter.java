@@ -44,6 +44,9 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
     @Autowired
     private SecurityProperties securityProperties;
 
+    @Autowired
+    private ValidateCodeProcessor validateCodeProcessor;
+
     @Override
     public void afterPropertiesSet() throws ServletException {
         super.afterPropertiesSet();
@@ -71,7 +74,7 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
         }
         if(action){
             try {
-                validate(new ServletWebRequest(request));
+                validateCodeProcessor.validate(new ServletWebRequest(request));
             }catch(ValidateCodeException validateCodeException){
                 authenticationFailureHandler.onAuthenticationFailure(request,response,validateCodeException);
                 return;
@@ -83,29 +86,7 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
 
     }
 
-    private void validate(ServletWebRequest servletWebRequest) throws ServletRequestBindingException {
-        HttpSession session = servletWebRequest.getRequest().getSession();
-        ImageCode codeInSession = (ImageCode)session.getAttribute(ValidateCodeProcessor.SESSION_KEY_PREFIX);
 
-        String codeInRequest = ServletRequestUtils.getStringParameter(servletWebRequest.getRequest(),"imageCode");
-        if(StringUtils.isBlank(codeInRequest)){
-            throw new ValidateCodeException("验证码不能为空");
-        }
-
-        if(codeInSession == null){
-            throw new ValidateCodeException("验证码不存在");
-        }
-
-        if(codeInSession.isExpired()){
-            throw new ValidateCodeException("验证码过期");
-        }
-
-        if(!StringUtils.equalsIgnoreCase(codeInRequest,codeInSession.getCode())){
-            throw new ValidateCodeException("验证码不匹配");
-        }
-
-        session.removeAttribute(ValidateCodeProcessor.SESSION_KEY_PREFIX);
-    }
 
 
 }

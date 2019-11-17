@@ -2,6 +2,7 @@ package com.redtomato.security.config;
 
 import com.redtomato.security.authentication.BrowserDefaultFailureHandler;
 import com.redtomato.security.authentication.BrowserDefaultSuccessHandler;
+import com.redtomato.security.authentication.mobile.SmsCodeAuthenticationSecurityConfig;
 import com.redtomato.security.properties.SecurityProperties;
 import com.redtomato.security.validatecode.filter.ValidateCodeFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,9 @@ public class HttpSecurityConfig {
     @Qualifier("myUserDetailService")
     private UserDetailsService userDetailsService;
 
+    @Autowired
+    private SmsCodeAuthenticationSecurityConfig smsCodeAuthenticationSecurityConfig;
+
     /**
      * 配置记住我功能
      * @return
@@ -89,7 +93,8 @@ public class HttpSecurityConfig {
                     .anyRequest()
                     .authenticated()
                     .and()
-                    .csrf().disable();
+                    .csrf().disable()
+                    .apply(smsCodeAuthenticationSecurityConfig);
         }
     }
 }
