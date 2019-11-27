@@ -87,6 +87,9 @@ public class HttpSecurityConfig {
                     .tokenValiditySeconds(securityProperties.getBrowser().getRememberMeSeconds())
                     .userDetailsService(userDetailsService)
                     .and()
+                    .sessionManagement()
+                    .invalidSessionUrl("/")
+                    .and()
                     .authorizeRequests()
                     .antMatchers("/authentication/require",
                             "/code/*",
